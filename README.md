@@ -7,12 +7,14 @@ Python scripts for scanning the LDH activity log, processing the results with a 
 - Run main.py
 
 ## Notes:
-- Default pagesize is 100 and is specified in `ldh-config.json`
+- Default pagesize is 100 and is specified in `ldh-config.json`. The main script
+will continue to make requests for subsequent pages of results until all 
+results are returned
 - Initial timestamp is set to `1667306718`, which is the 1st November 2022. This
 can be changed in `ldh-config.json`
 - Once the process has run successfully, a `status.json` file will 
 be created that stores the timestamp that the process last began to run. 
-This is checked before the process is run, so subsequent runs of 
+This is checked before the process is run again, so subsequent runs of 
 the script will only look in the Activity Log for items that have 
 been created since the last time the script was run
 - To force the process to start again from the beginning, simply 
@@ -30,7 +32,9 @@ code for performing whichever document scanning you wish.
 
 The `scanObject()` function is called for each document. It is expected to return 
 an array of notifications, built using the Scanner's 
-private `__buildNotification()` function. The function loops through each key/value 
+private `__buildNotification()` function. `__buildNotification()` will need
+to be amended to build a notification with the appropriate structure.
+The `scanObject()` function loops through each key/value 
 pair within the document. In its current form, it creates a separate 
 notification for each matched key/value pair but this functionality may need to
 be changed depending on the type of scanning being done. For example, 
