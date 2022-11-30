@@ -9,10 +9,8 @@ def getStatus():
         with open('status.json') as statusFile:
             status = json.load(statusFile)
     except:
-        print("unable to open status.json, creating new status object")
-        status = {
-
-        }
+        print("unable to open status.json, creating new status file")
+        status = {}
     return status
 
 
@@ -36,7 +34,6 @@ def main():
     # Repeat Activity Log calls for multiple pages until all results are returned
     while not allResultsReturned:
         page += 1
-        print('Requesting page: ' + str(page))
         alResponse = ldh.getALEntries(page, timestamp)
         if int(alResponse['documentCount']) < int(alResponse['pagesize']):
                 allResultsReturned = True
@@ -48,9 +45,8 @@ def main():
             payloadObject = json.loads(payload)
             notifications = scanner.scanObject(datasetID, documentID, payloadObject)
             for notification in notifications:
-                # Push notifications back to LDH here
+                # Push notifications back to LDH here, or comment out and just print to the screen for testing
                 #response = ldh.pushNotification(notification)
-                #print(response.text)
                 print(notification)
         status['lastRun'] = processBeginTimestamp
         writeStatus(status)
