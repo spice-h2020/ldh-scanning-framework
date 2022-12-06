@@ -1,5 +1,6 @@
 from LDH import LDH
 from Scanner import Scanner
+from Hate import Hate
 import json
 import time
 
@@ -22,6 +23,7 @@ def writeStatus(status):
 def main():
     ldh = LDH()
     scanner = Scanner()
+    hate = Hate('hate_config.json')
     status = getStatus()
     if 'lastRun' in status:
         timestamp = status['lastRun']
@@ -43,7 +45,8 @@ def main():
             documentID = alEntry['al:documentId']
             payload = alEntry['al:request']['al:payload']
             payloadObject = json.loads(payload)
-            notifications = scanner.scanObject(datasetID, documentID, payloadObject)
+            #notifications = scanner.scanObject(datasetID, documentID, payloadObject)
+            notifications = hate.scanObject(datasetID, documentID, payloadObject)
             for notification in notifications:
                 # Push notifications back to LDH here, or comment out and just print to the screen for testing
                 #response = ldh.pushNotification(notification)
