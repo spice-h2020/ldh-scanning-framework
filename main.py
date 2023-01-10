@@ -47,8 +47,8 @@ def main():
             documentID = alEntry['al:documentId']
             payload = alEntry['al:request']['al:payload']
             payloadObject = json.loads(payload)
-            notifications = scanner.scanObject(datasetID, documentID, payloadObject)
-            #notifications = hate.scanObject(datasetID, documentID, payloadObject)
+            #notifications = scanner.scanObject(datasetID, documentID, payloadObject)
+            notifications = hate.scanObject(datasetID, documentID, payloadObject)
             for notification in notifications:
                 # Push notifications back to LDH here, or comment out and just print to the screen for testing
                 #response = ldh.pushNotification(notification)

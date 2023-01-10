@@ -9,19 +9,18 @@ class Hate(Scanner):
         notifications = []
         items = []
         itemsFlagged = False
-        for key in docObject:
-            # FIXME - Also iterate attributes that are themselves hierarchical sub-structures
-            # FIXME - This will require a recursive call for iteration
+        flatObject = super().flattenObject(docObject)
+        for key in flatObject:
             # Just a basic test here, to be replaced with appropriate document scanning
-            print(key + ':' + str(docObject[key]))
-            output = self.scanForHate(str(docObject[key]))
+            print(key + ':' + str(flatObject[key]))
+            output = self.scanForHate(str(flatObject[key]))
             if not output:
                 # output is empty, no toxicity detected
                 pass
             else:
                 singleItem = {}
                 singleItem['key'] = key
-                singleItem['value'] = str(docObject[key])
+                singleItem['value'] = str(flatObject[key])
                 singleItem['toxicity'] = output
                 #print(output)
                 items.append(singleItem)

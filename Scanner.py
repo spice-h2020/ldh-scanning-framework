@@ -29,7 +29,7 @@ class Scanner:
             '''
         return items
 
-    def __flattenObject(self, originalDocument):
+    def flattenObject(self, originalDocument):
         out = {}
 
         def flatten(x, name=''):
