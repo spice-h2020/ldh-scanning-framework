@@ -16,9 +16,10 @@ class Scanner:
         items = []
         # Loop through all the fields in the document
         print('*** ' + datasetID + ':' + documentID + ' ***')
-        for key in docObject:
+        flatDoc = self.__flattenObject(docObject)
+        for key in flatDoc:
             # Just a basic test here, to be replaced with appropriate document scanning
-            print(key + ':' + str(docObject[key]))
+            print(key + ':' + str(flatDoc[key]))
             '''
             if '@' in docObject[key]:
                 # build an appropriate notification
@@ -28,6 +29,8 @@ class Scanner:
             '''
         return items
 
+    def __flattenObject(self, originalDocument):
+        return originalDocument
 
     def __buildNotification(self, datasetID, documentID, fieldName, fieldValue, message):
         notification = {

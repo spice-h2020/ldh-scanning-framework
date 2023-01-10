@@ -22,8 +22,9 @@ def writeStatus(status):
 
 def main():
     ldh = LDH()
-    scanner = Scanner()
+    scanner = Scanner('scanner_config.json')
     hate = Hate('hate_config.json')
+    scannerList = [scanner, hate]
     status = getStatus()
     if 'lastRun' in status:
         timestamp = status['lastRun']

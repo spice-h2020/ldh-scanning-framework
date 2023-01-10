@@ -11,6 +11,7 @@ class Hate(Scanner):
         itemsFlagged = False
         for key in docObject:
             # FIXME - Also iterate attributes that are themselves hierarchical sub-structures
+            # FIXME - This will require a recursive call for iteration
             # Just a basic test here, to be replaced with appropriate document scanning
             print(key + ':' + str(docObject[key]))
             output = self.scanForHate(str(docObject[key]))
