@@ -30,7 +30,22 @@ class Scanner:
         return items
 
     def __flattenObject(self, originalDocument):
-        return originalDocument
+        out = {}
+
+        def flatten(x, name=''):
+            if type(x) is dict:
+                for a in x:
+                    flatten(x[a], name + a + '/')
+            elif type(x) is list:
+                i = 0
+                for a in x:
+                    flatten(a, name + str(i) + '/')
+                    i += 1
+            else:
+                out[name[:-1]] = x
+
+        flatten(originalDocument)
+        return out
 
     def __buildNotification(self, datasetID, documentID, fieldName, fieldValue, message):
         notification = {
