@@ -27,8 +27,10 @@ To push notifications back to the LDH, uncomment the line
 `response = ldh.pushNotification(notification)` in the main loop.
 
 ## Scanner class
-This is a simple and mostly empty class that will need to be populated with 
-code for performing whichever document scanning you wish.
+This is a simple (parent) base class that lays out the structure and foundations of scanning 
+JSON documents and building notification objects. Class inheritance should be used to build 
+a child class that performs the specifics of the type of scanning you wish to perform, using 
+your own implementations of the `scanObject()` and `__buildNotification()` functions.
 
 The `scanObject()` function is called for each document. It is expected to return 
 an array of notifications, built using the Scanner's 
@@ -41,3 +43,10 @@ be changed depending on the type of scanning being done. For example,
 privacy scanning will likely scan through all key/value pairs and combine 
 any positive results into a single notification that details these matches 
 and includes an overall severity score.
+
+Scanner's `flattenObject()` function will take a multidimensional nested object and flatten 
+it, so it only has a single level of key/value pairs and can be iterated in a single loop 
+without the need for recursion. This can (and should) be called from child object 
+instances using `super().flattenObject()` iteration. The resulting object will have attribute 
+names of the form `attrib1/attrib2/attrib3` where the `/` character indicates multiple 
+levels of nested data structure in the original scanned JSON document.
