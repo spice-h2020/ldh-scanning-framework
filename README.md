@@ -50,3 +50,6 @@ without the need for recursion. This can (and should) be called from child objec
 instances using `super().flattenObject()` iteration. The resulting object will have attribute 
 names of the form `attrib1/attrib2/attrib3` where the `/` character indicates multiple 
 levels of nested data structure in the original scanned JSON document.
+
+Currently, the `Hate` class shows an example of the class inheritance approach 
+described above.
