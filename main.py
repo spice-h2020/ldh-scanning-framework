@@ -1,5 +1,6 @@
 from LDH import LDH
 from Scanner import Scanner
+from Privacy import Privacy
 from Hate import Hate
 import json
 import time
@@ -22,9 +23,10 @@ def writeStatus(status):
 
 def main():
     ldh = LDH()
-    scanner = Scanner('scanner_config.json')
-    hate = Hate('hate_config.json')
-    # scannerList = [scanner, hate]
+    scanner = Scanner()
+    # hate = Hate('hate_config.json')
+    privacy = Privacy()
+    # scannerList = [scanner, privacy]
     scannerList = [scanner]
     status = getStatus()
     if 'lastRun' in status:
@@ -40,23 +42,36 @@ def main():
         page += 1
         alResponse = ldh.getALEntries(page, timestamp)
         if int(alResponse['documentCount']) < int(alResponse['pagesize']):
-                allResultsReturned = True
+            allResultsReturned = True
         # Loop through each activity log entry
         for alEntry in alResponse['results']:
             datasetID = alEntry['al:datasetId']
             documentID = alEntry['al:documentId']
             payload = alEntry['al:request']['al:payload']
             payloadObject = json.loads(payload)
-            #notifications = scanner.scanObject(datasetID, documentID, payloadObject)
-            notifications = hate.scanObject(datasetID, documentID, payloadObject)
+            # notifications = hate.scanObject(datasetID, documentID, payloadObject)
+            # for notification in notifications:
+            #     # Push notifications back to LDH here, or comment out and just print to the screen for testing
+            #     #response = ldh.pushNotification(notification)
+            #     print(notification)
+            # status['lastRun'] = processBeginTimestamp
+            notifications = privacy.scanObject(
+                datasetID, documentID, payloadObject)
             for notification in notifications:
                 # Push notifications back to LDH here, or comment out and just print to the screen for testing
                 #response = ldh.pushNotification(notification)
-                print(notification)
+                # Pretty Print JSON
+                filesLen = notification['Fields']
+                if len(filesLen) != 0:
+                    json_formatted_str = json.dumps(notification, indent=4)
+                    print(json_formatted_str)
+
         status['lastRun'] = processBeginTimestamp
         writeStatus(status)
 
 
 if __name__ == "__main__":
-    main()
 
+    while True:
+        main()
+        time.sleep(60)  # sleep for 60 seconds (1 minute)

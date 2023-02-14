@@ -168,8 +168,7 @@ class Privacy(Scanner):
         current_date = datetime.datetime.now().date()
         return [{
             "Job-type": "PRIVACY-VIOLATION",
-            "Date": current_date.strftime("%m/%d/%Y"),
-            "Timestamp": int(time.time()),
+            "Modified-by": int(time.time()),
             "Dataset ID": datasetID,
             "Document ID": documentID,
             "Status": "ALERT",
