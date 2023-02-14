@@ -1,7 +1,6 @@
 from LDH import LDH
-from Scanner import Scanner
 from Privacy import Privacy
-from Hate import Hate
+#from Hate import Hate
 import json
 import time
 
@@ -23,11 +22,11 @@ def writeStatus(status):
 
 def main():
     ldh = LDH()
-    scanner = Scanner()
+    # scanner = Scanner()
     # hate = Hate('hate_config.json')
     privacy = Privacy()
     # scannerList = [scanner, privacy]
-    scannerList = [scanner]
+    scannerList = [privacy]
     status = getStatus()
     if 'lastRun' in status:
         timestamp = status['lastRun']
