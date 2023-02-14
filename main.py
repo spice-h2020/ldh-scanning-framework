@@ -26,7 +26,7 @@ def main():
     # hate = Hate('hate_config.json')
     privacy = Privacy()
     # scannerList = [scanner, privacy]
-    scannerList = [privacy]
+    # scannerList = [privacy]
     status = getStatus()
     if 'lastRun' in status:
         timestamp = status['lastRun']
