@@ -58,12 +58,12 @@ def main():
                 datasetID, documentID, payloadObject)
             for notification in notifications:
                 # Push notifications back to LDH here, or comment out and just print to the screen for testing
-                #response = ldh.pushNotification(notification)
+                response = ldh.pushNotification(notification)
                 # Pretty Print JSON
-                filesLen = notification['Fields']
-                if len(filesLen) != 0:
-                    json_formatted_str = json.dumps(notification, indent=4)
-                    print(json_formatted_str)
+                # filesLen = notification['Fields']
+                # if len(filesLen) != 0:
+                #     json_formatted_str = json.dumps(notification, indent=4)
+                #     print(json_formatted_str)
 
         status['lastRun'] = processBeginTimestamp
         writeStatus(status)
