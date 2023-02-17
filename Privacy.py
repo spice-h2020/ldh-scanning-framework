@@ -5,10 +5,10 @@ import time
 import spacy
 import datetime
 import re
-import en_core_web_lg
+import en_core_web_sm
 
 
-nlp = spacy.load("en_core_web_lg")
+nlp = spacy.load("en_core_web_sm")
 
 
 class Privacy(Scanner):
@@ -33,7 +33,7 @@ class Privacy(Scanner):
         regex_mastercard = r"\b(5[1-5][0-9]{2}[-\s]?[0-9]{4}[-\s]?[0-9]{4}[-\s]?[0-9]{4}|22[23][0-9]{12})\b"
         regex_socialmedia = r"(?<=^|(?<=[^a-zA-Z0-9-_\.]))@([A-Za-z]+[A-Za-z0-9]+)"
         regex_ips = r"\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b"
-        regex_postcode = r"\b([A-Z]{1,2}\d{1,2})\s*(\d[A-Z]{2})\b"
+        regex_postcode = r'[A-Z]{1,2}[0-9R][0-9A-Z]? [0-9][A-Z]{2}'
         regex_street_address = r"\b(?!\d{4}\b)(?!\d{5,}\b)(?!\d{4}\sby\sand\b)\d+\s+[A-Za-z]+\s+[A-Za-z]+\b"
         regex_date = r'(\d{4}-\d{2}-\d{2}|\d{3}T\d{2}:\d{2}:\d{2}|\d{2}\/\d{2}\/\d{4}|\d{2}-\d{2}-\d{4}|\d{2}\/\d{2}\/\d{2}|\d{2}-\d{2}-\d{2})'
         regex_dob = r"(?:\b(?:(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2}(?:st|nd|rd|th)?(?:,\s+)?\d{4}))"
@@ -81,7 +81,7 @@ class Privacy(Scanner):
         # if len(pii) == 0:
         doc = nlp(value)
         for ent in doc.ents:
-            if ent.label_ in ["PERSON", "ORG", "GPE", "LOC"]:
+            if ent.label_ in ["PERSON", "DATE", "ORG", "GPE", "LOC"]:
                 pii[ent.label_] = ent.text
         if len(pii) == 0:
             return {"code": 400}
@@ -128,9 +128,17 @@ class Privacy(Scanner):
 
         for key in flatObject:
 
+            # or re.search(r'_id', key):
+            if re.search(r'timestamp', key) or re.search(r'_ID', key) or re.search(r'JOB-TYPE', key):
+                continue
             valueToCheckPii = flatObject[key]
+
+            valueToCheckPii = self.__filter_english_words(str(valueToCheckPii))
+            if (valueToCheckPii == ''):
+                continue
+
             values = self.__valueToCheckPii(str(valueToCheckPii), nlp, key)
-            #print(key, values)
+            # print(key, values)
             # print(values)
             if (values["code"] == 200):
                 for index in values["data"]:
@@ -174,3 +182,10 @@ class Privacy(Scanner):
             "description": 'Personally identifiable information was detected in this document',
             'Fields': items
         }]
+
+    def __filter_english_words(self, text):
+        english_text = ''
+        for char in text:
+            if ord(char) < 128:
+                english_text += char
+        return english_text
