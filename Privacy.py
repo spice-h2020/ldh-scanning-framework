@@ -31,7 +31,7 @@ class Privacy(Scanner):
         regex_phone = r"^(?:(?:\+44\s?\d{1,5}|\(?\d{5}\)?)\s?\d{3}\s?\d{3,4}|(?:\+1\s?)?\d{3}[\s.-]?\d{3}[\s.-]?\d{4}|\+39\s?(?:(?:\d{2}[\s.-]?)?\d{3}[\s.-]?\d{4}))$"
         regex_visacard = r"\b(4\d{3}[\s]\d{4}[\s]\d{4}[\s]\d{4}|4\d{3}[-]\d{4}[-]\d{4}[-]\d{4}|4\d{3}[.]\d{4}[.]\d{4}[.]\d{4}|4\d{3}\d{4}\d{4}\d{4})\b"
         regex_mastercard = r"\b(5[1-5][0-9]{2}[-\s]?[0-9]{4}[-\s]?[0-9]{4}[-\s]?[0-9]{4}|22[23][0-9]{12})\b"
-        regex_socialmedia = r"(?<=^|(?<=[^a-zA-Z0-9-_\.]))@([A-Za-z]+[A-Za-z0-9]+)"
+        #regex_socialmedia = r"(?<=^|(?<=[^a-zA-Z0-9-_\.]))@([A-Za-z]+[A-Za-z0-9]+)"
         regex_ips = r"\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b"
         regex_postcode = r'[A-Z]{1,2}[0-9R][0-9A-Z]? [0-9][A-Z]{2}'
         regex_street_address = r"\b(?!\d{4}\b)(?!\d{5,}\b)(?!\d{4}\sby\sand\b)\d+\s+[A-Za-z]+\s+[A-Za-z]+\b"
@@ -56,9 +56,9 @@ class Privacy(Scanner):
         find_mastercard = re.findall(regex_mastercard, value)
         if find_mastercard:
             pii['MASTERCARD'] = find_mastercard
-        find_socialmedia = re.findall(regex_socialmedia, value)
-        if find_socialmedia:
-            pii['SOCIALMEDIA'] = find_socialmedia
+        # find_socialmedia = re.findall(regex_socialmedia, value)
+        # if find_socialmedia:
+        #     pii['SOCIALMEDIA'] = find_socialmedia
         find_ips = re.findall(regex_ips, value)
         if find_ips:
             pii['IPS'] = find_ips
@@ -112,13 +112,13 @@ class Privacy(Scanner):
             "STREETADDRESS": 3,
             "STAE": 1,
             "COUNTRY": 1,
-            "DATE": 1,
+            # "DATE": 1,
             "ZIP": 2,
             "POSTCODE": 2,
             "IPS": 2,
             "AGE": 2,
             "MASTERCARD": 4,
-            "SOCIALMEDIA": 3,
+            # "SOCIALMEDIA": 3,
             'DATE OF BIRTH': 2,
 
         }
