@@ -35,7 +35,7 @@ class Privacy(Scanner):
         regex_ips = r"\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b"
         regex_postcode = r'[A-Z]{1,2}[0-9R][0-9A-Z]? [0-9][A-Z]{2}'
         regex_street_address = r"\b(?!\d{4}\b)(?!\d{5,}\b)(?!\d{4}\sby\sand\b)\d+\s+[A-Za-z]+\s+[A-Za-z]+\b"
-        regex_date = r'(\d{4}-\d{2}-\d{2}|\d{3}T\d{2}:\d{2}:\d{2}|\d{2}\/\d{2}\/\d{4}|\d{2}-\d{2}-\d{4}|\d{2}\/\d{2}\/\d{2}|\d{2}-\d{2}-\d{2})'
+        #regex_date = r'(\d{4}-\d{2}-\d{2}|\d{3}T\d{2}:\d{2}:\d{2}|\d{2}\/\d{2}\/\d{4}|\d{2}-\d{2}-\d{4}|\d{2}\/\d{2}\/\d{2}|\d{2}-\d{2}-\d{2})'
         regex_dob = r"(?:\b(?:(?:January|February|March|April|May|June|July|August|September|October|November|December)\s+\d{1,2}(?:st|nd|rd|th)?(?:,\s+)?\d{4}))"
         regex_age = r"\b(\d{1,2}\syears|age\s?of\s?\d{1,2})\b"
 
@@ -68,9 +68,9 @@ class Privacy(Scanner):
         find_street_address = re.findall(regex_street_address, value)
         if find_street_address:
             pii['STREETADDRESS'] = find_street_address
-        find_date = re.findall(regex_date, value)
-        if find_date:
-            pii['DATE'] = find_date
+        # find_date = re.findall(regex_date, value)
+        # if find_date:
+        #     pii['DATE'] = find_date
         find_dob = re.findall(regex_dob, value)
         if find_dob:
             pii['DATE OF BIRTH'] = find_dob
@@ -79,10 +79,10 @@ class Privacy(Scanner):
             pii['AGE'] = find_age
 
         # if len(pii) == 0:
-        doc = nlp(value)
-        for ent in doc.ents:
-            if ent.label_ in ["PERSON", "DATE", "ORG", "GPE", "LOC"]:
-                pii[ent.label_] = ent.text
+        # doc = nlp(value)
+        # for ent in doc.ents:
+        #     if ent.label_ in ["PERSON", "DATE", "ORG", "GPE", "LOC"]:
+        #         pii[ent.label_] = ent.text
         if len(pii) == 0:
             return {"code": 400}
         else:
