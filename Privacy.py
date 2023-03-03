@@ -33,11 +33,11 @@ class Privacy(Scanner):
     def __valueToCheckPii(self, value, nlp, key):
 
         regex_email = r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b"
-        regex_zip = r"\b\d{5}(?:-\d{4})?\b"
-        regex_phone = r"^(?:(?:\+44\s?\d{1,5}|\(?\d{5}\)?)\s?\d{3}\s?\d{3,4}|(?:\+1\s?)?\d{3}[\s.-]?\d{3}[\s.-]?\d{4}|\+39\s?(?:(?:\d{2}[\s.-]?)?\d{3}[\s.-]?\d{4}))$"
+        #regex_zip = r"\b\d{5}(?:-\d{4})?\b"
+        regex_phone = r"^(?!.*(19[2-9][0-9]|20[0-9][0-9]|21[0-1][0-9]|212[0-3]))(?:\+972|0)(?:-| )?(?:5[02-9]-|\(?(?:77|79|1(?:[89]|[2-9]\d))\)?-?\d{3}-?\d{4}|(?:[2-9]|5[013-9]|6[1-9]|7[1-9]|8[1-5])\d{7}|\(?(?:20|21)\d{1}\)?-?\d{7}|\(?(?:2[57]|[3-9][2-9])\)?-?\d{7}|7[0-4]\d{7}|\(?(?:1(?:1|3|[68][0-9])|2(?:[02468]|[13579][0-9])|3(?:[013]|4[0-9]|5[1-9]|[689][0-9])|4(?:[013-9]|[2-8][0-9])|5(?:[0235679]|[14][0-9])|6(?:[013-9]|[2-8][0-9])|7(?:[012345689]|[38][0-9])|8(?:[01579]|[2-8][0-9])|9(?:[01345789]|[2-9][0-9]))\)?-?\d{6,8}|\(?(?:11|3[02-9]|[4-8]\d|9[24578])\)?-?\d{6,8})$"
         regex_visacard = r"\b(4\d{3}[\s]\d{4}[\s]\d{4}[\s]\d{4}|4\d{3}[-]\d{4}[-]\d{4}[-]\d{4}|4\d{3}[.]\d{4}[.]\d{4}[.]\d{4}|4\d{3}\d{4}\d{4}\d{4})\b"
         regex_mastercard = r"\b(5[1-5][0-9]{2}[-\s]?[0-9]{4}[-\s]?[0-9]{4}[-\s]?[0-9]{4}|22[23][0-9]{12})\b"
-        regex_socialmedia = r"(?<=^|(?<=[^a-zA-Z0-9-_\.]))@([A-Za-z]+[A-Za-z0-9]+)"
+        #regex_socialmedia = r"(?<=^|(?<=[^a-zA-Z0-9-_\.]))@([A-Za-z]+[A-Za-z0-9]+)"
         regex_ips = r"\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b"
         regex_postcode = r'[A-Z]{1,2}[0-9R][0-9A-Z]? [0-9][A-Z]{2}'
         #regex_street_address = r"\b(?!\d{4}\b)(?!\d{5,}\b)(?!\d{4}\sby\sand\b)\d+\s+[A-Za-z]+\s+[A-Za-z]+\b"
@@ -50,9 +50,9 @@ class Privacy(Scanner):
         find_email = re.findall(regex_email, value)
         if find_email:
             pii['EMAIL'] = find_email
-        find_zip = re.findall(regex_zip, value)
-        if find_zip:
-            pii['ZIP'] = find_zip
+        # find_zip = re.findall(regex_zip, value)
+        # if find_zip:
+        #     pii['ZIP'] = find_zip
         find_phone = re.findall(regex_phone, value)
         if find_phone:
             pii['PHONE'] = find_phone
@@ -62,9 +62,9 @@ class Privacy(Scanner):
         find_mastercard = re.findall(regex_mastercard, value)
         if find_mastercard:
             pii['MASTERCARD'] = find_mastercard
-        find_socialmedia = re.findall(regex_socialmedia, value)
-        if find_socialmedia:
-            pii['SOCIALMEDIA'] = find_socialmedia
+        # find_socialmedia = re.findall(regex_socialmedia, value)
+        # if find_socialmedia:
+        #     pii['SOCIALMEDIA'] = find_socialmedia
         find_ips = re.findall(regex_ips, value)
         if find_ips:
             pii['IPS'] = find_ips
@@ -87,14 +87,14 @@ class Privacy(Scanner):
         # if len(pii) == 0:
         #     doc = nlp(value)
         #     for ent in doc.ents:
-        #         if ent.label_ in ["PERSON", "GPE", "LOC"]:
+        #         if ent.label_ in ["PERSON"]:
         #             pii[ent.label_] = ent.text
         if len(pii) == 0:
             return {"code": 400}
         else:
             return {"code": 200, "key": key, "data": pii}
 
-    def scanObject(self, datasetID, documentID, docObject):
+    def scanObject(self, datasetID, documentID,  processingTimestamp, docObject):
         items = []
         EXTREME = 4
         HIGH = 3
@@ -107,7 +107,6 @@ class Privacy(Scanner):
         assigned_value = {
             "PERSON": 4,
             "CITY": 1,
-            "ADDRESS": 3,
             "NAME": 4,
             "ORG": 2,
             "GPE": 1,
@@ -119,12 +118,12 @@ class Privacy(Scanner):
             "STAE": 1,
             "COUNTRY": 1,
             # "DATE": 1,
-            "ZIP": 2,
+            # "ZIP": 2,
             "POSTCODE": 2,
             "IPS": 2,
             "AGE": 2,
             "MASTERCARD": 4,
-            "SOCIALMEDIA": 3,
+            # "SOCIALMEDIA": 3,
             'DATE OF BIRTH': 2,
 
         }
@@ -138,7 +137,8 @@ class Privacy(Scanner):
             if (valueToCheckPii == ''):
                 continue
 
-            valueToCheckPii = re.sub(r"\b0\.\d+\b", "", valueToCheckPii)
+            valueToCheckPii = re.sub(
+                r'\b(0\.\d{1,40}|\b(0\.[0-9]|[1-9]\.[0-9]{1,40}|10\.[0-9]{1,40}))\b', "", valueToCheckPii)
             valueToCheckPii = re.sub(
                 r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))", "", valueToCheckPii)
 
@@ -179,9 +179,10 @@ class Privacy(Scanner):
         current_date = datetime.datetime.now().date()
         return [{
             "job-type": "PRIVACY-VIOLATION",
-            "modified-by": int(time.time()),
+            "modified-at": int(time.time()),
             "dataset": datasetID,
             "document ID": documentID,
+            "documentTimestamp": processingTimestamp,
             "status": "ALERT",
             "severityScores": severityScores,
             "description": 'Personally identifiable information was detected in this document',

@@ -46,6 +46,7 @@ def main():
         for alEntry in alResponse['results']:
             datasetID = alEntry['al:datasetId']
             documentID = alEntry['al:documentId']
+            processingTimestamp = alEntry['_timestamp']
             payload = alEntry['al:request']['al:payload']
             payloadObject = json.loads(payload)
             # notifications = hate.scanObject(datasetID, documentID, payloadObject)
@@ -55,7 +56,7 @@ def main():
             #     print(notification)
             # status['lastRun'] = processBeginTimestamp
             notifications = privacy.scanObject(
-                datasetID, documentID, payloadObject)
+                datasetID, documentID, processingTimestamp, payloadObject)
             for notification in notifications:
                 # Push notifications back to LDH here, or comment out and just print to the screen for testing
                 response = ldh.pushNotification(notification)

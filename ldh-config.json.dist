@@ -5,7 +5,7 @@
     "key": "<key here>",
     "pagesize": 100,
     "initialTimestamp": "1667306718",
-    "datasetsToExclude": ["spice_rdfjobs2"]
+    "datasetsToExclude": ["spice_rdfjobs2", "spice__metadata", "spice_policies_requests", "spice_policies", "spice_notifications", "spice_access_requests"]
   },
   "notifications": {
     "datasetID": "spice_rdfjobs2",
