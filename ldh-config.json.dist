@@ -1,14 +1,14 @@
 {
-  "ldhServer": "https://api2.pp.mksmart.org",
+  "ldhServer": "https://<ldh-api>",
   "activityLog": {
-    "datasetID": "spice__activity_log",
+    "datasetID": "activity_log",
     "key": "<key here>",
     "pagesize": 100,
     "initialTimestamp": "1667306718",
-    "datasetsToExclude": ["spice_rdfjobs2", "spice__metadata", "spice_policies_requests", "spice_policies", "spice_notifications", "spice_access_requests"]
+    "datasetsToExclude": ["rdfjobs", "metadata", "policies_requests", "policies", "notifications", "access_requests"]
   },
   "notifications": {
-    "datasetID": "spice_rdfjobs2",
+    "datasetID": "notifications",
     "key": "<key here>"
   }
 }
