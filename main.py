@@ -4,6 +4,8 @@ from Privacy import Privacy
 import json
 import time
 
+LINE_UP = '\033[1A'
+LINE_CLEAR = '\x1b[2K'
 
 def getStatus():
     try:
@@ -36,6 +38,7 @@ def main():
     page = 0
     processBeginTimestamp = int(time.time())
 
+    
     # Repeat Activity Log calls for multiple pages until all results are returned
     while not allResultsReturned:
         page += 1
@@ -43,10 +46,17 @@ def main():
         if int(alResponse['documentCount']) < int(alResponse['pagesize']):
             allResultsReturned = True
         # Loop through each activity log entry
+        print('Got '+str(alResponse['documentCount'])+' entries')
+        print('starting loop through AL entries')
         for alEntry in alResponse['results']:
             datasetID = alEntry['al:datasetId']
             documentID = alEntry['al:documentId']
+
+            print(LINE_UP, end=LINE_CLEAR)
+            print(datasetID+':'+documentID)
+
             processingTimestamp = alEntry['_timestamp']
+
             payload = alEntry['al:request']['al:payload']
             payloadObject = json.loads(payload)
             # notifications = hate.scanObject(datasetID, documentID, payloadObject)
@@ -74,4 +84,6 @@ if __name__ == "__main__":
 
     while True:
         main()
+        print('waiting...')
         time.sleep(60)  # sleep for 60 seconds (1 minute)
+        print(LINE_UP, end=LINE_CLEAR)
