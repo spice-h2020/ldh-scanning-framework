@@ -94,7 +94,7 @@ class Privacy(Scanner):
         else:
             return {"code": 200, "key": key, "data": pii}
 
-    def scanObject(self, datasetID, documentID,  processingTimestamp, docObject):
+    def scanObject(self, datasetID, documentID,  docTimestamp, docObject):
         items = []
         EXTREME = 4
         HIGH = 3
@@ -185,7 +185,7 @@ class Privacy(Scanner):
             "modified-at": int(time.time()),
             "dataset": datasetID,
             "document ID": documentID,
-            "documentTimestamp": processingTimestamp,
+            "documentTimestamp": docTimestamp,
             "status": "ALERT",
             "severityScores": severityScores,
             "description": 'Personally identifiable information was detected in this document',
