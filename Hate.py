@@ -5,7 +5,7 @@ import time
 
 class Hate(Scanner):
     # returns an array of objects for entry into the log, or an empty array
-    def scanObject(self, datasetID, documentID, docObject):
+    def scanObject(self, datasetID, documentID, docTimestamp, docObject):
         notifications = []
         items = []
         itemsFlagged = False
@@ -13,7 +13,11 @@ class Hate(Scanner):
         for key in flatObject:
             # Just a basic test here, to be replaced with appropriate document scanning
             print(key + ':' + str(flatObject[key]))
-            output = self.scanForHate(str(flatObject[key]))
+            try:
+                output = self.scanForHate(str(flatObject[key]))
+            except:
+                raise Exception('Error running hate speech analysis. API Service may not be running.')
+
             if not output:
                 # output is empty, no toxicity detected
                 pass

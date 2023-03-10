@@ -142,7 +142,10 @@ class Privacy(Scanner):
             valueToCheckPii = re.sub(
                 r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))", "", valueToCheckPii)
 
-            values = self.__valueToCheckPii(str(valueToCheckPii), nlp, key)
+            try:
+                values = self.__valueToCheckPii(str(valueToCheckPii), nlp, key)
+            except:
+                raise Exception('Error running PII analysis. PII scanning abandoned for this document.')
             # print(key, values)
             # print(values)
             if (values["code"] == 200):
