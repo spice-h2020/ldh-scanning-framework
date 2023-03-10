@@ -11,8 +11,7 @@ class Hate(Scanner):
         itemsFlagged = False
         flatObject = super().flattenObject(docObject)
         for key in flatObject:
-            # Just a basic test here, to be replaced with appropriate document scanning
-            print(key + ':' + str(flatObject[key]))
+            #print(key + ':' + str(flatObject[key]))
             try:
                 output = self.scanForHate(str(flatObject[key]))
             except:
@@ -23,28 +22,30 @@ class Hate(Scanner):
                 pass
             else:
                 singleItem = {}
-                singleItem['key'] = key
-                singleItem['value'] = str(flatObject[key])
+                singleItem['Field name'] = key
+                singleItem['Value'] = str(flatObject[key])
                 singleItem['toxicity'] = output
                 #print(output)
                 items.append(singleItem)
                 itemsFlagged = True
         if itemsFlagged:
-            singleNotification = self.__buildNotification(datasetID, documentID, items)
+            singleNotification = self.__buildNotification(datasetID, documentID, docTimestamp, items)
             notifications.append(singleNotification)
 
         return notifications
 
 
-    def __buildNotification(self, datasetID, documentID, items):
+    def __buildNotification(self, datasetID, documentID, docTimestamp, items):
         notification = {
+
             "job-type": "TOXICITY-NOTIFICATION",
             "submitted-by": "LDH-SCANNER",
-            "modified": int(time.time()),
-            "message": "This document was flagged as containing toxic text",
-            "flags": items,
+            "modified-at": int(time.time()),
+            "description": "This document was flagged as containing toxic text",
+            "Fields": items,
             "dataset": datasetID,
-            "document": documentID,
+            "document ID": documentID,
+            "documentTimestamp": docTimestamp,
             "status": "ALERT"
         }
         return notification
