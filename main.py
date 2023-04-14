@@ -1,6 +1,6 @@
 from LDH import LDH
 from Privacy import Privacy
-#from Hate import Hate
+from Hate import Hate
 import json
 import time
 
@@ -24,11 +24,20 @@ def writeStatus(status):
 
 def main():
     ldh = LDH()
-    # scanner = Scanner()
-    # hate = Hate('hate_config.json')
+
+    '''
+    Instantiate scanner modules here
+    '''
+    hate = Hate('hate_config.json')
     privacy = Privacy()
-    # scannerList = [scanner, privacy]
+
+    '''
+    Add scanner modules to scannerList
+    '''
+    scannerList = [privacy, hate]
     # scannerList = [privacy]
+
+
     status = getStatus()
     if 'lastRun' in status:
         timestamp = status['lastRun']
@@ -55,26 +64,21 @@ def main():
             print(LINE_UP, end=LINE_CLEAR)
             print(datasetID+':'+documentID)
 
-            processingTimestamp = alEntry['_timestamp']
+            documentTimestamp = alEntry['_timestamp']
 
             payload = alEntry['al:request']['al:payload']
             payloadObject = json.loads(payload)
-            # notifications = hate.scanObject(datasetID, documentID, payloadObject)
-            # for notification in notifications:
-            #     # Push notifications back to LDH here, or comment out and just print to the screen for testing
-            #     #response = ldh.pushNotification(notification)
-            #     print(notification)
-            # status['lastRun'] = processBeginTimestamp
-            notifications = privacy.scanObject(
-                datasetID, documentID, processingTimestamp, payloadObject)
-            for notification in notifications:
-                # Push notifications back to LDH here, or comment out and just print to the screen for testing
-                response = ldh.pushNotification(notification)
-                # Pretty Print JSON
-                # filesLen = notification['Fields']
-                # if len(filesLen) != 0:
-                #     json_formatted_str = json.dumps(notification, indent=4)
-                #     print(json_formatted_str)
+
+            for scanner in scannerList:
+                try:
+                    notifications = scanner.scanObject(datasetID, documentID, documentTimestamp, payloadObject)
+                except Exception as err:
+                    print(err)
+                else:
+                    # Generally, only one notification is generated per doc, but the facility exists to return many, hence the iteration loop
+                    for notification in notifications:
+                        # Push notifications back to LDH here, or comment out and just print to the screen for testing
+                        response = ldh.pushNotification(notification)
 
         status['lastRun'] = processBeginTimestamp
         writeStatus(status)

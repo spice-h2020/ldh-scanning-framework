@@ -11,7 +11,7 @@ class Scanner:
             self.config = {}
 
     # returns an array of objects for entry into the log, or an empty array
-    def scanObject(self, datasetID, documentID, docObject):
+    def scanObject(self, datasetID, documentID, documentTimestamp, docObject):
         itemsFound = False
         items = []
         # Loop through all the fields in the document

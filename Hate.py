@@ -5,42 +5,47 @@ import time
 
 class Hate(Scanner):
     # returns an array of objects for entry into the log, or an empty array
-    def scanObject(self, datasetID, documentID, docObject):
+    def scanObject(self, datasetID, documentID, docTimestamp, docObject):
         notifications = []
         items = []
         itemsFlagged = False
         flatObject = super().flattenObject(docObject)
         for key in flatObject:
-            # Just a basic test here, to be replaced with appropriate document scanning
-            print(key + ':' + str(flatObject[key]))
-            output = self.scanForHate(str(flatObject[key]))
+            #print(key + ':' + str(flatObject[key]))
+            try:
+                output = self.scanForHate(str(flatObject[key]))
+            except:
+                raise Exception('Error running hate speech analysis. API Service may not be running.')
+
             if not output:
                 # output is empty, no toxicity detected
                 pass
             else:
                 singleItem = {}
-                singleItem['key'] = key
-                singleItem['value'] = str(flatObject[key])
+                singleItem['Field name'] = key
+                singleItem['Value'] = str(flatObject[key])
                 singleItem['toxicity'] = output
                 #print(output)
                 items.append(singleItem)
                 itemsFlagged = True
         if itemsFlagged:
-            singleNotification = self.__buildNotification(datasetID, documentID, items)
+            singleNotification = self.__buildNotification(datasetID, documentID, docTimestamp, items)
             notifications.append(singleNotification)
 
         return notifications
 
 
-    def __buildNotification(self, datasetID, documentID, items):
+    def __buildNotification(self, datasetID, documentID, docTimestamp, items):
         notification = {
+
             "job-type": "TOXICITY-NOTIFICATION",
             "submitted-by": "LDH-SCANNER",
-            "modified": int(time.time()),
-            "message": "This document was flagged as containing toxic text",
-            "flags": items,
+            "modified-at": int(time.time()),
+            "description": "This document was flagged as containing toxic text",
+            "Fields": items,
             "dataset": datasetID,
-            "document": documentID,
+            "document ID": documentID,
+            "documentTimestamp": docTimestamp,
             "status": "ALERT"
         }
         return notification

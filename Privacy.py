@@ -94,7 +94,7 @@ class Privacy(Scanner):
         else:
             return {"code": 200, "key": key, "data": pii}
 
-    def scanObject(self, datasetID, documentID,  processingTimestamp, docObject):
+    def scanObject(self, datasetID, documentID,  docTimestamp, docObject):
         items = []
         EXTREME = 4
         HIGH = 3
@@ -142,7 +142,10 @@ class Privacy(Scanner):
             valueToCheckPii = re.sub(
                 r"(?i)\b((?:https?://|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:'\".,<>?«»“”‘’]))", "", valueToCheckPii)
 
-            values = self.__valueToCheckPii(str(valueToCheckPii), nlp, key)
+            try:
+                values = self.__valueToCheckPii(str(valueToCheckPii), nlp, key)
+            except:
+                raise Exception('Error running PII analysis. PII scanning abandoned for this document.')
             # print(key, values)
             # print(values)
             if (values["code"] == 200):
@@ -182,7 +185,7 @@ class Privacy(Scanner):
             "modified-at": int(time.time()),
             "dataset": datasetID,
             "document ID": documentID,
-            "documentTimestamp": processingTimestamp,
+            "documentTimestamp": docTimestamp,
             "status": "ALERT",
             "severityScores": severityScores,
             "description": 'Personally identifiable information was detected in this document',
