@@ -33,7 +33,15 @@ class LDH:
         pagesizeParam = 'pagesize=' + str(pagesize)
         alFullUrl = baseUrl + '/browse/' + alDataset + '?' + queryParam + '&' + pagesizeParam + '&' + pageParam
         # verify=False is needed in the dev phase as api2.pp.mksmart.org has an invalid/mismatched SSL cert
-        response = requests.request("GET", alFullUrl, headers=headers, auth=HTTPBasicAuth(alDatasetKey, alDatasetKey), verify=False)
+
+        try:
+            response = requests.request("GET", alFullUrl, headers=headers, auth=HTTPBasicAuth(alDatasetKey, alDatasetKey), verify=False)
+        except:
+            raise Exception('Error retrieving activity log entries, HTTP call failed')
+
+        if response.status_code != 200:
+            raise Exception('Error retrieving activity log entries, code received:' + str(response.status_code))
+
         return response.json()
 
 

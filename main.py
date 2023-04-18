@@ -44,44 +44,48 @@ def main():
     else:
         timestamp = 0
     allResultsReturned = False
-    page = 0
+    page = 1
     processBeginTimestamp = int(time.time())
 
     
     # Repeat Activity Log calls for multiple pages until all results are returned
     while not allResultsReturned:
-        page += 1
-        alResponse = ldh.getALEntries(page, timestamp)
-        if int(alResponse['documentCount']) < int(alResponse['pagesize']):
-            allResultsReturned = True
-        # Loop through each activity log entry
-        print('Got '+str(alResponse['documentCount'])+' entries')
-        print('starting loop through AL entries')
-        for alEntry in alResponse['results']:
-            datasetID = alEntry['al:datasetId']
-            documentID = alEntry['al:documentId']
+        try:
+            alResponse = ldh.getALEntries(page, timestamp)
+        except Exception as err:
+            print(err)
+            time.sleep(60)  # sleep for 60 seconds (1 minute)
+        else:
+            if int(alResponse['documentCount']) < int(alResponse['pagesize']):
+                allResultsReturned = True
+            # Loop through each activity log entry
+            print('Got '+str(alResponse['documentCount'])+' entries')
+            print('starting loop through AL entries')
+            for alEntry in alResponse['results']:
+                datasetID = alEntry['al:datasetId']
+                documentID = alEntry['al:documentId']
 
-            print(LINE_UP, end=LINE_CLEAR)
-            print(datasetID+':'+documentID)
+                print(LINE_UP, end=LINE_CLEAR)
+                print(datasetID+':'+documentID)
 
-            documentTimestamp = alEntry['_timestamp']
+                documentTimestamp = alEntry['_timestamp']
 
-            payload = alEntry['al:request']['al:payload']
-            payloadObject = json.loads(payload)
+                payload = alEntry['al:request']['al:payload']
+                payloadObject = json.loads(payload)
 
-            for scanner in scannerList:
-                try:
-                    notifications = scanner.scanObject(datasetID, documentID, documentTimestamp, payloadObject)
-                except Exception as err:
-                    print(err)
-                else:
-                    # Generally, only one notification is generated per doc, but the facility exists to return many, hence the iteration loop
-                    for notification in notifications:
-                        # Push notifications back to LDH here, or comment out and just print to the screen for testing
-                        response = ldh.pushNotification(notification)
-
-        status['lastRun'] = processBeginTimestamp
-        writeStatus(status)
+                for scanner in scannerList:
+                    try:
+                        notifications = scanner.scanObject(datasetID, documentID, documentTimestamp, payloadObject)
+                    except Exception as err:
+                        print(err)
+                    else:
+                        # Generally, only one notification is generated per doc, but the facility exists to return many, hence the iteration loop
+                        for notification in notifications:
+                            # Push notifications back to LDH here, or comment out and just print to the screen for testing
+                            response = ldh.pushNotification(notification)
+            page += 1
+            status['lastRun'] = processBeginTimestamp
+            writeStatus(status)
 
 
 if __name__ == "__main__":
